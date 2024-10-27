@@ -18,5 +18,5 @@ export const Button = ({ children, disabledCondition, handleClick }) => {
 Button.propTypes = {
   disabledCondition: PropTypes.bool,
   handleClick: PropTypes.func.isRequired,
-  children: PropTypes.element,
+  children: PropTypes.string,
 };

@@ -72,7 +72,7 @@ function App() {
   return (
     <>
       <header className="text-light p-3 text-uppercase bg-primary">
-        <h1>Lista de filmes atualizada sem vírus 2024 gratis</h1>
+        <h1>Lista de filmes atualizada</h1>
       </header>
 
       <SearchBar
@@ -101,6 +101,13 @@ function App() {
           </div>
         </section>
       </main>
+
+      <footer className="bg-secondary p-4 text-end mt-4">
+        <p className="p-0 m-0">
+          MovieList 2024. Todos os direitos reservados{" "}
+          <span className="text-light">&copy;</span>
+        </p>
+      </footer>
     </>
   );
 }

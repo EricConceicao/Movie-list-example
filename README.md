@@ -1,6 +1,8 @@
-# React + Vite
+# Movie list example in React and Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Using the Jsonplaceholder API to simulate the site
+
+## Use `npm run dev` command to test.
 
 Currently, two official plugins are available:
 
