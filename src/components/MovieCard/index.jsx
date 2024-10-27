@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import "./styles.css";
 
 // This component mounts the movie card from the given array in the props.
@@ -47,4 +48,8 @@ export const MovieCard = ({ filteredMovies }) => {
       ))}
     </div>
   );
+};
+
+MovieCard.propTypes = {
+  filteredMovies: PropTypes.array.isRequired,
 };

@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Form from "react-bootstrap/Form";
@@ -20,4 +22,11 @@ export const SearchBar = ({ onChange, placeholder, ariaLabel, title }) => {
       </Navbar>
     </Nav>
   );
+};
+
+SearchBar.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
+  ariaLabel: PropTypes.string,
+  title: PropTypes.string,
 };

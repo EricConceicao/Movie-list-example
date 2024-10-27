@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { MovieCard } from "../../components/MovieCard";
 import { SearchBar } from "../../components/SearchBar";
 import { fetchMoviesData } from "../../utils/fetchData";
