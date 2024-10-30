@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 import { MovieCard } from "../../components/MovieCard";
-import { SearchBar } from "../../components/SearchBar";
-import { fetchMoviesData } from "../../utils/fetchData";
+//import { SearchBar } from "../../components/SearchBar";
+import { fetchData } from "../../utils/fetchData.js";
 import { Button } from "../../components/Button";
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
   // Controls how many movies the page will have
   const [moviesPerPage] = useState(10);
   // Controls the input value to filter the movies
-  const [searchValue, setSearchValue] = useState("");
+  //const [searchValue, setSearchValue] = useState("");
 
   // function to handle back and next button actions
   function handlePage(action) {
@@ -45,9 +45,19 @@ function App() {
 
   // Fetch handler
   async function handleFetch() {
-    const moviesData = await fetchMoviesData();
-    setMoviesArray(moviesData);
+    const [{ results: moviesData }] = await fetchData(
+      "https://api.themoviedb.org/3/discover/movie?language=pt-BR",
+      {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhY2IwMDE0YWIxZTJhYjUzMzA3ODkxOGM2MjE0OTNiMSIsIm5iZiI6MTczMDI5MjI2MS41ODgyODg1LCJzdWIiOiI2NzIyMWRhYTE2MDE0MTlmNzM2MWQ1ZDUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.LnNwmYGJPb_G67ShKqjIbpSoj4jFna_bTJK4_9b95Ng",
+        },
+      }
+    );
 
+    setMoviesArray(moviesData);
     // Using slice to limit how many movies will display on the page, based on moviesPerPage hook.
     setMoviesOnScreen(moviesData.slice(page, moviesPerPage));
   }
@@ -57,33 +67,15 @@ function App() {
     handleFetch();
   }, []);
 
-  // Input handler for Searchbar
-  function handleChange(input) {
-    setSearchValue(input);
-  }
-
-  // This filters the movies when the user inputs a movie's name in the search bar, by the movie title.
-  const filteredMovies = searchValue
-    ? moviesArray.filter((post) =>
-        post.title.toLowerCase().includes(searchValue.toLowerCase())
-      )
-    : moviesOnScreen;
-
   return (
     <>
       <header className="text-light p-3 text-uppercase bg-primary">
         <h1>Lista de filmes atualizada</h1>
       </header>
 
-      <SearchBar
-        placeholder="Digite aqui..."
-        onChange={handleChange}
-        title="Pesquisar"
-        ariaLabel="Digite aqui para pesquisar um filme"
-      />
       <main>
         <section className="mt-3">
-          <MovieCard filteredMovies={filteredMovies} />
+          <MovieCard moviesArray={moviesOnScreen} />
 
           <div className="row gap-1 my-1 justify-content-center">
             <Button
