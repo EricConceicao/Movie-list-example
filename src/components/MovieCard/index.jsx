@@ -1,14 +1,14 @@
 import PropTypes from "prop-types";
-import { fetchData } from "../../utils/fetchData.js";
 import { useEffect, useState } from "react";
 
-import "./styles.css";
+import { fetchData } from "../../utils/fetchData.js";
+import { Img, GridContainer, Card, CardHeader } from "./styles.js";
 
 export const MovieCard = ({ moviesArray }) => {
   const [imageBaseUrl, setImageBaseUrl] = useState();
   const [posterSize] = useState("w500");
 
-  async function initialConfig() {
+  async function handleFetch() {
     const [{ images }] = await fetchData(
       "https://api.themoviedb.org/3/configuration",
       {
@@ -24,25 +24,20 @@ export const MovieCard = ({ moviesArray }) => {
   }
 
   useEffect(() => {
-    initialConfig();
+    handleFetch();
   }, []);
 
   return (
-    <div id="cards-container">
+    <GridContainer>
       {moviesArray?.map((movie) => (
-        <article
-          id="movie-card"
-          key={movie.id}
-          className="border border-1 border-dark rounded p-2 mb-3"
-        >
-          <header>
-            <h2 className="fs-5">{movie.title}</h2>
-          </header>
+        <Card id="movie-card" key={movie.id}>
+          <CardHeader>
+            <h2>{movie.title}</h2>
+          </CardHeader>
 
           <section>
             <figure>
-              <img
-                width="100%"
+              <Img
                 alt={`imagem do filme: ${movie.title}`}
                 src={imageBaseUrl + posterSize + movie.poster_path}
               />
@@ -53,15 +48,9 @@ export const MovieCard = ({ moviesArray }) => {
               <strong>Sinopse:</strong> {movie.overview}
             </p>
           </section>
-          <section className="border-top border-1 border-dark">
-            <h2 className="fs-5">
-              <strong>Elenco</strong>
-            </h2>
-            <ul className="d-flex gap-2 m-0 p-0"></ul>
-          </section>
-        </article>
+        </Card>
       ))}
-    </div>
+    </GridContainer>
   );
 };
 

@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { MovieCard } from "../../components/MovieCard";
-//import { SearchBar } from "../../components/SearchBar";
+import { MovieCard } from "../../components/MovieCard/index.jsx";
 import { fetchData } from "../../utils/fetchData.js";
-import { Button } from "../../components/Button";
+import { Button } from "../../components/Button/index.jsx";
+
+import { Background } from "./styles.js";
+import { ButtonContainer } from "../../components/ButtonContainer/index.jsx";
 
 function App() {
   // useState hooks //
@@ -68,8 +70,8 @@ function App() {
   }, []);
 
   return (
-    <>
-      <header className="text-light p-3 text-uppercase bg-primary">
+    <Background>
+      <header>
         <h1>Lista de filmes atualizada</h1>
       </header>
 
@@ -77,7 +79,7 @@ function App() {
         <section className="mt-3">
           <MovieCard moviesArray={moviesOnScreen} />
 
-          <div className="row gap-1 my-1 justify-content-center">
+          <ButtonContainer>
             <Button
               disabledCondition={page == 0}
               handleClick={() => handlePage("back")}
@@ -90,7 +92,7 @@ function App() {
             >
               Próxima página
             </Button>
-          </div>
+          </ButtonContainer>
         </section>
       </main>
 
@@ -100,7 +102,7 @@ function App() {
           <span className="text-light">&copy;</span>
         </p>
       </footer>
-    </>
+    </Background>
   );
 }
 
