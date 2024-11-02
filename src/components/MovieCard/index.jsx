@@ -6,7 +6,7 @@ import { Img, GridContainer, Card, CardHeader } from "./styles.js";
 
 export const MovieCard = ({ moviesArray }) => {
   const [imageBaseUrl, setImageBaseUrl] = useState();
-  const [posterSize] = useState("w500");
+  const [posterSize] = useState("w185");
 
   async function handleFetch() {
     const [{ images }] = await fetchData(
@@ -42,11 +42,6 @@ export const MovieCard = ({ moviesArray }) => {
                 src={imageBaseUrl + posterSize + movie.poster_path}
               />
             </figure>
-            <p>
-              <strong>Lançamento:</strong> {movie.release_date}
-              <br />
-              <strong>Sinopse:</strong> {movie.overview}
-            </p>
           </section>
         </Card>
       ))}

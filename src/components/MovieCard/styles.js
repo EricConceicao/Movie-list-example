@@ -14,18 +14,16 @@ export const CardHeader = styled.header`
 `;
 
 export const Card = styled.section`
-  border-radius: 5px;
-  max-width: 250px;
+  border-radius: 10%;
   padding: 0.6em;
   margin: 0.5rem;
-  outline: solid 2px #a12;
-
+  border-top: solid 2px #663399;
   figure {
+    margin: 0;
     text-align: center;
   }
 `;
 export const Img = styled.img`
-  width: 200px;
-  height: 250px;
+  height: 232px;
   border-radius: 5px;
 `;

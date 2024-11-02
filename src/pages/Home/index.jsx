@@ -1,15 +1,19 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { MovieCard } from "../../components/MovieCard/index.jsx";
 import { fetchData } from "../../utils/fetchData.js";
 import { Button } from "../../components/Button/index.jsx";
 
+import GlobalStyles from "../../styles/globalStyles.js";
+import { lightTheme } from "../../styles/themes/lightTheme.js";
+import { darkTheme } from "../../styles/themes/darkTheme.js";
 import { Background } from "./styles.js";
 import { ButtonContainer } from "../../components/ButtonContainer/index.jsx";
+import { ThemeProvider } from "styled-components";
 
 function App() {
   // useState hooks //
-
+  const [theme, setTheme] = useState(darkTheme);
   // Contains an array of movies organized to match the site
   const [moviesArray, setMoviesArray] = useState([]);
   // Controls how many movies will load on screen for the map function
@@ -46,7 +50,7 @@ function App() {
   }
 
   // Fetch handler
-  async function handleFetch() {
+  const handleFetch = useCallback(async (page, moviesPerPage) => {
     const [{ results: moviesData }] = await fetchData(
       "https://api.themoviedb.org/3/discover/movie?language=pt-BR",
       {
@@ -62,47 +66,58 @@ function App() {
     setMoviesArray(moviesData);
     // Using slice to limit how many movies will display on the page, based on moviesPerPage hook.
     setMoviesOnScreen(moviesData.slice(page, moviesPerPage));
-  }
+  }, []);
 
   // Makes a fetch to the API on component mount.
   useEffect(() => {
-    handleFetch();
-  }, []);
+    handleFetch(0, moviesPerPage);
+  }, [handleFetch, moviesPerPage]);
 
   return (
-    <Background>
-      <header>
-        <h1>Lista de filmes atualizada</h1>
-      </header>
+    <ThemeProvider theme={theme}>
+      <Background>
+        <GlobalStyles />
+        <Button
+          disabledCondition={false}
+          handleClick={() => {
+            theme == lightTheme ? setTheme(darkTheme) : setTheme(lightTheme);
+          }}
+        >
+          Mudar tema
+        </Button>
+        <header>
+          <h1>Lista de filmes atualizada</h1>
+        </header>
 
-      <main>
-        <section className="mt-3">
-          <MovieCard moviesArray={moviesOnScreen} />
+        <main>
+          <section className="mt-3">
+            <MovieCard moviesArray={moviesOnScreen} />
 
-          <ButtonContainer>
-            <Button
-              disabledCondition={page == 0}
-              handleClick={() => handlePage("back")}
-            >
-              Página anterior
-            </Button>
-            <Button
-              disabledCondition={page + moviesPerPage >= moviesArray.length}
-              handleClick={() => handlePage("next")}
-            >
-              Próxima página
-            </Button>
-          </ButtonContainer>
-        </section>
-      </main>
+            <ButtonContainer>
+              <Button
+                disabledCondition={page == 0}
+                handleClick={() => handlePage("back")}
+              >
+                Página anterior
+              </Button>
+              <Button
+                disabledCondition={page + moviesPerPage >= moviesArray.length}
+                handleClick={() => handlePage("next")}
+              >
+                Próxima página
+              </Button>
+            </ButtonContainer>
+          </section>
+        </main>
 
-      <footer className="bg-secondary p-4 text-end mt-4">
-        <p className="p-0 m-0">
-          MovieList 2024. Todos os direitos reservados{" "}
-          <span className="text-light">&copy;</span>
-        </p>
-      </footer>
-    </Background>
+        <footer className="bg-secondary p-4 text-end mt-4">
+          <p className="p-0 m-0">
+            MovieList 2024. Todos os direitos reservados{" "}
+            <span className="text-light">&copy;</span>
+          </p>
+        </footer>
+      </Background>
+    </ThemeProvider>
   );
 }
 
