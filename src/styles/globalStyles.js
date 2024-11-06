@@ -13,6 +13,14 @@ const GlobalStyles = createGlobalStyle`
     margin: 0;
   }
 
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }
+
   colors: {
     primary: "#fff";
     secondary: "#000";

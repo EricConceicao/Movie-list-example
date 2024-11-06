@@ -1,123 +1,127 @@
 import { useCallback, useEffect, useState } from "react";
+import { fetchData, getConfig } from "../../utils/fetchData.js";
 
-import { MovieCard } from "../../components/MovieCard/index.jsx";
-import { fetchData } from "../../utils/fetchData.js";
-import { Button } from "../../components/Button/index.jsx";
+import { MovieCard } from "../../components/MovieCard";
+import { Button } from "../../components/Button";
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
 
-import GlobalStyles from "../../styles/globalStyles.js";
 import { lightTheme } from "../../styles/themes/lightTheme.js";
 import { darkTheme } from "../../styles/themes/darkTheme.js";
-import { Background } from "./styles.js";
-import { ButtonContainer } from "../../components/ButtonContainer/index.jsx";
+import { Container } from "./styles.js";
+import { ButtonContainer } from "../../components/ButtonContainer";
 import { ThemeProvider } from "styled-components";
+import { NavBar } from "../../components/Navbar/index.jsx";
 
 function App() {
   // useState hooks //
   const [theme, setTheme] = useState(darkTheme);
   // Contains an array of movies organized to match the site
   const [moviesArray, setMoviesArray] = useState([]);
-  // Controls how many movies will load on screen for the map function
-  const [moviesOnScreen, setMoviesOnScreen] = useState([]);
-  // Controls the page for the pagination
-  const [page, setPage] = useState(0);
-  // Controls how many movies the page will have
-  const [moviesPerPage] = useState(10);
+  // Controls the page number
+  const [page, setPage] = useState(1);
+  // Controls the filters for fetching
+  const [filter, setFilter] = useState("popular");
   // Controls the input value to filter the movies
   //const [searchValue, setSearchValue] = useState("");
 
   // function to handle back and next button actions
   function handlePage(action) {
-    let nextPage = null;
-    let nextMovies = null;
-
     switch (action) {
       case "next":
-        nextPage = moviesPerPage + page;
-        nextMovies = moviesArray.slice(nextPage, moviesPerPage + nextPage);
+        setPage((prevPage) => prevPage + 1);
+        handleFetch(page);
         break;
 
       case "back":
-        nextPage = page - moviesPerPage;
-        nextMovies = moviesArray.slice(nextPage, moviesPerPage + nextPage);
+        setPage((prevPage) => prevPage - 1);
+        handleFetch(page);
         break;
 
       default:
         console.error("ERROR: No action");
         break;
     }
-    setMoviesOnScreen(nextMovies);
-    setPage(nextPage);
   }
 
   // Fetch handler
-  const handleFetch = useCallback(async (page, moviesPerPage) => {
-    const [{ results: moviesData }] = await fetchData(
-      "https://api.themoviedb.org/3/discover/movie?language=pt-BR",
-      {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhY2IwMDE0YWIxZTJhYjUzMzA3ODkxOGM2MjE0OTNiMSIsIm5iZiI6MTczMDI5MjI2MS41ODgyODg1LCJzdWIiOiI2NzIyMWRhYTE2MDE0MTlmNzM2MWQ1ZDUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.LnNwmYGJPb_G67ShKqjIbpSoj4jFna_bTJK4_9b95Ng",
-        },
-      }
-    );
+  const handleFetch = useCallback(
+    async (page) => {
+      const [{ results: moviesData }] = await fetchData(
+        `https://api.themoviedb.org/3/movie/${filter}?language=pt-br&page=${page}`,
+        getConfig
+      );
 
-    setMoviesArray(moviesData);
-    // Using slice to limit how many movies will display on the page, based on moviesPerPage hook.
-    setMoviesOnScreen(moviesData.slice(page, moviesPerPage));
-  }, []);
+      setMoviesArray(moviesData);
+    },
+    [filter]
+  );
 
   // Makes a fetch to the API on component mount.
   useEffect(() => {
-    handleFetch(0, moviesPerPage);
-  }, [handleFetch, moviesPerPage]);
+    handleFetch(page);
+  }, [handleFetch, page]);
 
   return (
-    <ThemeProvider theme={theme}>
-      <Background>
-        <GlobalStyles />
-        <Button
-          disabledCondition={false}
-          handleClick={() => {
-            theme == lightTheme ? setTheme(darkTheme) : setTheme(lightTheme);
-          }}
-        >
-          Mudar tema
-        </Button>
-        <header>
-          <h1>Lista de filmes atualizada</h1>
-        </header>
+    <>
+      <ThemeProvider theme={theme}>
+        <Header>
+          <NavBar>
+            <Button
+              disabledCondition={filter === "popular"}
+              handleClick={() => setFilter("popular")}
+            >
+              Populares
+            </Button>
+            <Button
+              disabledCondition={filter === "top_rated"}
+              handleClick={() => setFilter("top_rated")}
+            >
+              Melhor Avaliados
+            </Button>
+            <Button
+              disabledCondition={filter === "upcoming"}
+              handleClick={() => setFilter("upcoming")}
+            >
+              Lançamentos
+            </Button>
+          </NavBar>
 
-        <main>
-          <section className="mt-3">
-            <MovieCard moviesArray={moviesOnScreen} />
+          <Button
+            disabledCondition={false}
+            handleClick={() => {
+              theme == lightTheme ? setTheme(darkTheme) : setTheme(lightTheme);
+            }}
+          >
+            Mudar tema
+          </Button>
+        </Header>
 
-            <ButtonContainer>
-              <Button
-                disabledCondition={page == 0}
-                handleClick={() => handlePage("back")}
-              >
-                Página anterior
-              </Button>
-              <Button
-                disabledCondition={page + moviesPerPage >= moviesArray.length}
-                handleClick={() => handlePage("next")}
-              >
-                Próxima página
-              </Button>
-            </ButtonContainer>
-          </section>
-        </main>
+        <Container>
+          <main>
+            <section className="mt-3">
+              <MovieCard moviesArray={moviesArray} />
 
-        <footer className="bg-secondary p-4 text-end mt-4">
-          <p className="p-0 m-0">
-            MovieList 2024. Todos os direitos reservados{" "}
-            <span className="text-light">&copy;</span>
-          </p>
-        </footer>
-      </Background>
-    </ThemeProvider>
+              <ButtonContainer>
+                <Button
+                  disabledCondition={page == 1}
+                  handleClick={() => handlePage("back")}
+                >
+                  Página anterior
+                </Button>
+                <Button
+                  disabledCondition={false}
+                  handleClick={() => handlePage("next")}
+                >
+                  Próxima página
+                </Button>
+              </ButtonContainer>
+            </section>
+          </main>
+        </Container>
+        <Footer />
+      </ThemeProvider>
+    </>
   );
 }
 

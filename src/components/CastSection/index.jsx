@@ -1,29 +1,22 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
-import { fetchData } from "../../utils/fetchData.js";
+import { useCallback, useEffect, useState } from "react";
+import { fetchData, getConfig } from "../../utils/fetchData.js";
 
 export const CastSection = ({ movieId }) => {
   const [castData, setCastData] = useState([]);
 
-  async function handleFetch() {
+  const handleFetch = useCallback(async () => {
     const [{ cast }] = await fetchData(
       `https://api.themoviedb.org/3/movie/${movieId}/credits?language=pt-BR`,
-      {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhY2IwMDE0YWIxZTJhYjUzMzA3ODkxOGM2MjE0OTNiMSIsIm5iZiI6MTczMDI5MjI2MS41ODgyODg1LCJzdWIiOiI2NzIyMWRhYTE2MDE0MTlmNzM2MWQ1ZDUiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.LnNwmYGJPb_G67ShKqjIbpSoj4jFna_bTJK4_9b95Ng",
-        },
-      }
+      getConfig
     );
 
     setCastData(cast);
-  }
+  }, [movieId]);
 
   useEffect(() => {
     handleFetch();
-  }, []);
+  }, [handleFetch]);
 
   return (
     <ul>

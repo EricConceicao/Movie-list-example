@@ -27,3 +27,11 @@ export const fetchData = async (urls, config = {}) => {
     console.error("Error on fetchData function" + err);
   }
 };
+
+export const getConfig = {
+  method: "GET",
+  headers: {
+    accept: "application/json",
+    Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+  },
+};
